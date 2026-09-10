@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BloodConnect - Inventory Management</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f8;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #b71c1c, #e53935);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        select:focus,
+        input:focus {
+            outline: none;
+            border-color: #e53935;
+        }
+
+        button {
+            padding: 14px 25px;
+            border: none;
+            border-radius: 8px;
+            background: #e53935;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 25px;
+        }
+
+        button:hover {
+            background: #b71c1c;
+        }
+
+        #message {
+            margin-top: 20px;
+            padding: 14px;
+            border-radius: 8px;
+            display: none;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            color: #444;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .units {
+            font-weight: bold;
+        }
+
+        .available {
+            color: #2e7d32;
+        }
+
+        .unavailable {
+            color: #c62828;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #c62828;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            th,
+            td {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>🩸 BloodConnect</h1>
+        <p>Blood Inventory Management</p>
+    </div>
+
+    <div class="container">
+
+        <!-- Update Inventory -->
+        <div class="card">
+
+            <h2>Update Blood Inventory</h2>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="bank">Blood Bank</label>
+
+                    <select id="bank">
+                        <option value="1">Demo Blood Bank - Midnapore</option>
+                        <option value="2">Demo Blood Bank - Kharagpur</option>
+                        <option value="3">Demo Blood Bank - Jhargram</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="group">Blood Group</label>
+
+                    <select id="group">
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="units">Available Units</label>
+
+                    <input
+                        type="number"
+                        id="units"
+                        min="0"
+                        placeholder="Enter units">
+                </div>
+
+            </div>
+
+            <button onclick="updateInventory()">
+                Update Inventory
+            </button>
+
+            <div id="message"></div>
+
+        </div>
+
+
+        <!-- Current Inventory -->
+        <div class="card">
+
+            <h2>Current Blood Inventory</h2>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Blood Bank</th>
+                            <th>City</th>
+                            <th>Blood Group</th>
+                            <th>Available Units</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="inventoryTable">
+
+                        <tr>
+                            <td colspan="5" class="loading">
+                                Loading inventory...
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <a href="/" class="back-link">
+            ← Back to Blood Search
+        </a>
+
+    </div>
+
+
+    <script>
+
+        // Load all inventory
+        async function loadInventory() {
+
+            const table = document.getElementById("inventoryTable");
+
+            try {
+
+                const response = await fetch("/api/blood/inventory");
+
+                if (!response.ok) {
+                    throw new Error("Failed to load inventory");
+                }
+
+                const data = await response.json();
+
+                table.innerHTML = "";
+
+                data.forEach(item => {
+
+                    const row = document.createElement("tr");
+
+                    const statusClass =
+                        item.unitsAvailable > 0
+                            ? "available"
+                            : "unavailable";
+
+                    row.innerHTML = `
+                        <td>${item.bloodBank.name}</td>
+
+                        <td>${item.bloodBank.city}</td>
+
+                        <td><strong>${item.bloodGroup}</strong></td>
+
+                        <td class="units ${statusClass}">
+                            ${item.unitsAvailable} units
+                        </td>
+
+                        <td>
+                            ${formatDate(item.lastUpdated)}
+                        </td>
+                    `;
+
+                    table.appendChild(row);
+
+                });
+
+            } catch (error) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="loading">
+                            Unable to load inventory.
+                        </td>
+                    </tr>
+                `;
+
+            }
+        }
+
+
+        // Update inventory
+        async function updateInventory() {
+
+            const bankId =
+                document.getElementById("bank").value;
+
+            const group =
+                document.getElementById("group").value;
+
+            const units =
+                document.getElementById("units").value;
+
+            const message =
+                document.getElementById("message");
+
+
+            if (units === "" || Number(units) < 0) {
+
+                message.style.display = "block";
+                message.className = "error";
+
+                message.textContent =
+                    "Please enter a valid number of units.";
+
+                return;
+            }
+
+
+            message.style.display = "block";
+            message.className = "";
+            message.textContent =
+                "Updating inventory...";
+
+
+            try {
+
+                const response = await fetch(
+                    `/api/blood/update?bankId=${bankId}&group=${encodeURIComponent(group)}&units=${units}`,
+                    {
+                        method: "PUT"
+                    }
+                );
+
+
+                if (!response.ok) {
+                    throw new Error("Update failed");
+                }
+
+
+                const data = await response.json();
+
+
+                message.className = "success";
+
+                message.textContent =
+                    `${data.bloodGroup} inventory updated successfully: ${data.unitsAvailable} units available.`;
+
+
+                // Clear input
+                document.getElementById("units").value = "";
+
+
+                // Refresh inventory table
+                loadInventory();
+
+
+            } catch (error) {
+
+                message.className = "error";
+
+                message.textContent =
+                    "Unable to update inventory. Please try again.";
+
+            }
+
+        }
+
+
+        // Format date
+        function formatDate(dateString) {
+
+            if (!dateString) {
+                return "N/A";
+            }
+
+            const date = new Date(dateString);
+
+            return date.toLocaleString();
+
+        }
+
+
+        // Load inventory when page opens
+        loadInventory();
+
+    </script>
+
+</body>
+
+</html>

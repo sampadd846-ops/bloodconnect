@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BloodConnect | Manager Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+            color: #222;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           HEADER
+        ========================== */
+
+        header {
+            background: linear-gradient(135deg, #b71c1c, #e53935);
+            color: white;
+            padding: 25px 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            font-size: 38px;
+        }
+
+        .brand h1 {
+            font-size: 28px;
+        }
+
+        .brand p {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-top: 3px;
+        }
+
+        .logout-btn {
+            background: white;
+            color: #c62828;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #f5f5f5;
+        }
+
+        /* =========================
+           CONTAINER
+        ========================== */
+
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        /* =========================
+           WELCOME CARD
+        ========================== */
+
+        .welcome-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+            margin-bottom: 25px;
+        }
+
+        .welcome-card h2 {
+            color: #c62828;
+            margin-bottom: 8px;
+        }
+
+        .welcome-card p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .bank-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-box {
+            background: #f8f9fb;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .info-box strong {
+            display: block;
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .info-box span {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* =========================
+           UPDATE SECTION
+        ========================== */
+
+        .update-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+            margin-bottom: 25px;
+        }
+
+        .update-card h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .update-form {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 7px;
+            color: #555;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d4d4d4;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            border-color: #d32f2f;
+            box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+        }
+
+        .update-btn {
+            padding: 13px 25px;
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        .update-btn:hover {
+            background: #b71c1c;
+        }
+
+        /* =========================
+           MESSAGE
+        ========================== */
+
+        .message {
+            margin-top: 15px;
+            padding: 13px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .success {
+            display: block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+
+        .error {
+            display: block;
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #f44336;
+        }
+
+        /* =========================
+           INVENTORY TABLE
+        ========================== */
+
+        .inventory-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+        }
+
+        .inventory-card h2 {
+            margin-bottom: 20px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f5f5f5;
+            padding: 14px;
+            text-align: left;
+            font-size: 14px;
+            color: #555;
+        }
+
+        td {
+            padding: 14px;
+            border-top: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .blood-group {
+            font-weight: bold;
+            color: #c62828;
+        }
+
+        .units {
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .no-stock {
+            color: #c62828;
+        }
+
+        /* =========================
+           FOOTER
+        ========================== */
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        /* =========================
+           MOBILE
+        ========================== */
+
+        @media (max-width: 700px) {
+
+            header {
+                padding: 20px;
+            }
+
+            .brand h1 {
+                font-size: 23px;
+            }
+
+            .logo {
+                font-size: 30px;
+            }
+
+            .logout-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .container {
+                margin: 25px auto;
+                padding: 0 15px;
+            }
+
+            .bank-info {
+                grid-template-columns: 1fr;
+            }
+
+            .update-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .update-btn {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header>
+
+        <div class="brand">
+
+            <div class="logo">🩸</div>
+
+            <div>
+
+                <h1>BloodConnect</h1>
+
+                <p>Blood Bank Manager Dashboard</p>
+
+            </div>
+
+        </div>
+
+        <button class="logout-btn" onclick="logout()">
+            Logout
+        </button>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <div class="container">
+
+
+        <!-- WELCOME -->
+
+        <div class="welcome-card">
+
+            <h2 id="welcomeMessage">
+                Welcome, Manager
+            </h2>
+
+            <p>
+                Manage the blood inventory of your assigned blood bank.
+            </p>
+
+
+            <div class="bank-info">
+
+                <div class="info-box">
+
+                    <strong>Manager Username</strong>
+
+                    <span id="managerUsername">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <strong>Assigned Blood Bank</strong>
+
+                    <span id="bankName">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <strong>City</strong>
+
+                    <span id="bankCity">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <strong>Phone</strong>
+
+                    <span id="bankPhone">
+                        -
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- UPDATE -->
+
+        <div class="update-card">
+
+            <h2>
+                Update Blood Stock
+            </h2>
+
+
+            <div class="update-form">
+
+
+                <div class="form-group">
+
+                    <label for="bloodGroup">
+                        Blood Group
+                    </label>
+
+                    <select id="bloodGroup">
+
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="units">
+                        Available Units
+                    </label>
+
+                    <input
+                        type="number"
+                        id="units"
+                        min="0"
+                        placeholder="Enter units"
+                    >
+
+                </div>
+
+
+                <button
+                    class="update-btn"
+                    onclick="updateInventory()"
+                >
+                    Update Stock
+                </button>
+
+
+            </div>
+
+
+            <div id="message" class="message"></div>
+
+        </div>
+
+
+        <!-- INVENTORY -->
+
+        <div class="inventory-card">
+
+            <h2>
+                My Blood Bank Inventory
+            </h2>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Blood Group</th>
+                            <th>Available Units</th>
+                            <th>Last Updated</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="inventoryBody">
+
+                        <tr>
+
+                            <td colspan="3">
+                                Loading inventory...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        BloodConnect © 2026 | Manager Dashboard
+
+    </footer>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+        /* =========================
+           CHECK LOGIN
+        ========================== */
+
+        const userData =
+            sessionStorage.getItem("bloodconnectUser");
+
+
+        if (!userData) {
+
+            window.location.href = "/login.html";
+
+        }
+
+
+        let user;
+
+        try {
+
+            user = JSON.parse(userData);
+
+        } catch (error) {
+
+            sessionStorage.removeItem("bloodconnectUser");
+
+            window.location.href = "/login.html";
+
+        }
+
+
+        /* =========================
+           CHECK MANAGER ROLE
+        ========================== */
+
+        if (!user || user.role !== "MANAGER") {
+
+            alert("Manager access required.");
+
+            sessionStorage.removeItem("bloodconnectUser");
+
+            window.location.href = "/login.html";
+
+        }
+
+
+        /* =========================
+           DISPLAY MANAGER INFO
+        ========================== */
+
+        document.getElementById("managerUsername")
+            .textContent = user.username;
+
+
+        document.getElementById("welcomeMessage")
+            .textContent = "Welcome, " + user.username;
+
+
+        if (user.bloodBank) {
+
+            document.getElementById("bankName")
+                .textContent = user.bloodBank.name;
+
+            document.getElementById("bankCity")
+                .textContent = user.bloodBank.city;
+
+            document.getElementById("bankPhone")
+                .textContent = user.bloodBank.phone;
+
+        }
+
+
+        /* =========================
+           LOAD INVENTORY
+        ========================== */
+
+        async function loadInventory() {
+
+            const tableBody =
+                document.getElementById("inventoryBody");
+
+            try {
+
+               const response =
+    await fetch("/api/blood/manager-inventory", {
+        method: "GET",
+        credentials: "same-origin"
+    });
+
+                if (!response.ok) {
+
+                    throw new Error("Unable to load inventory");
+
+                }
+
+                const data =
+                    await response.json();
+
+
+                /*
+                 * Only show inventory
+                 * belonging to manager's bank.
+                 */
+
+                const myInventory = data;
+
+
+                tableBody.innerHTML = "";
+
+
+                if (myInventory.length === 0) {
+
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="3">
+                                No inventory found.
+                            </td>
+                        </tr>
+                    `;
+
+                    return;
+
+                }
+
+
+                myInventory.forEach(item => {
+
+                    let lastUpdated =
+                        "Not available";
+
+
+                    if (item.lastUpdated) {
+
+                        const date =
+                            new Date(item.lastUpdated);
+
+                        if (!isNaN(date)) {
+
+                            lastUpdated =
+                                date.toLocaleString();
+
+                        }
+
+                    }
+
+
+                    const unitsClass =
+                        item.unitsAvailable > 0
+                            ? "units"
+                            : "no-stock";
+
+
+                    tableBody.innerHTML += `
+
+                        <tr>
+
+                            <td class="blood-group">
+                                ${item.bloodGroup}
+                            </td>
+
+                            <td class="${unitsClass}">
+                                ${item.unitsAvailable} units
+                            </td>
+
+                            <td>
+                                ${lastUpdated}
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                });
+
+
+            } catch (error) {
+
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="3">
+                            Unable to load inventory.
+                        </td>
+                    </tr>
+                `;
+
+                console.error(error);
+
+            }
+
+        }
+
+
+        /* =========================
+           UPDATE INVENTORY
+        ========================== */
+
+        async function updateInventory() {
+
+            const group =
+                document.getElementById("bloodGroup").value;
+
+            const units =
+                document.getElementById("units").value;
+
+            const message =
+                document.getElementById("message");
+
+
+            message.className = "message";
+            message.textContent = "";
+
+
+            /* VALIDATION */
+
+            if (units === "") {
+
+                message.textContent =
+                    "Please enter available units.";
+
+                message.className =
+                    "message error";
+
+                return;
+
+            }
+
+
+            if (Number(units) < 0) {
+
+                message.textContent =
+                    "Units cannot be negative.";
+
+                message.className =
+                    "message error";
+
+                return;
+
+            }
+
+
+            try {
+
+                /*
+                 * Current backend endpoint uses
+                 * manager username to identify manager.
+                 */
+
+                const response = await fetch(
+    `/api/blood/manager-update?group=${encodeURIComponent(group)}&units=${encodeURIComponent(units)}`,
+    {
+        method: "PUT",
+        credentials: "same-origin"
+    }
+);
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Unable to update blood stock"
+                    );
+
+                }
+
+
+                await response.json();
+
+
+                message.textContent =
+                    `${group} stock updated successfully.`;
+
+                message.className =
+                    "message success";
+
+
+                document.getElementById("units").value =
+                    "";
+
+
+                /* Refresh inventory */
+
+                loadInventory();
+
+
+            } catch (error) {
+
+                message.textContent =
+                    "Failed to update blood stock.";
+
+                message.className =
+                    "message error";
+
+                console.error(error);
+
+            }
+
+        }
+
+
+        /* =========================
+           LOGOUT
+        ========================== */
+
+        function logout() {
+
+            sessionStorage.removeItem(
+                "bloodconnectUser"
+            );
+
+            window.location.href =
+                "/login.html";
+
+        }
+
+
+        /* =========================
+           INITIAL LOAD
+        ========================== */
+
+        loadInventory();
+
+    </script>
+
+</body>
+
+</html>
