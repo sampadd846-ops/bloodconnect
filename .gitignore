@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+# Java crash logs
+hs_err_pid*.log
+replay_pid*.log
+
+# Local configuration
+application-local.properties
